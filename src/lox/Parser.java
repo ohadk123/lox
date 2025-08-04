@@ -184,7 +184,7 @@ public class Parser {
 //                 |
 //                \/
     private Stmt statement() {
-        if (match(FUN)) return function(FuncKind.FUNCTION);
+        if (match(FUN)) return function(FunctionType.FUNCTION);
         if (match(FOR)) return forStatement();
         if (match(IF)) return ifStatement();
         if (match(PRINT)) return printStatement();
@@ -273,7 +273,7 @@ public class Parser {
         return new Stmt.Expression(value);
     }
 
-    private Stmt function(FuncKind kind) {
+    private Stmt function(FunctionType kind) {
         Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
 
         consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
@@ -425,21 +425,5 @@ public class Parser {
         Token paren = consume(RIGHT_PAREN, "Expect ')' after arguments");
 
         return new Expr.Call(callee, paren, arguments);
-    }
-
-    private enum FuncKind {
-        FUNCTION("function"),
-        METHOD("method");
-
-        private final String name;
-
-        FuncKind(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return this.name;
-        }
     }
 }

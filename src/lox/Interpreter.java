@@ -1,11 +1,14 @@
 package lox;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     final Environment globals = new Environment();
     private Environment environment = globals;
+    private final Map<Expr, Integer> locals = new HashMap<>();
 
     Interpreter() {
         globals.define("clock", NativeFunction.clock);
@@ -109,13 +112,16 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
     @Override
     public Object visitVariableExpr(Expr.Variable expr) {
-        return environment.get(expr.name);
+        return lookUpVariable(expr.name, expr);
     }
 
     @Override
     public Object visitAssignExpr(Expr.Assign expr) {
         Object value = evaluate(expr.value);
-        environment.assign(expr.name, value);
+
+        Integer distance = locals.get(expr);
+        if (distance != null) environment.assignAt(distance, expr.name, value);
+        else globals.assign(expr.name, value);
         return value;
     }
 
@@ -329,5 +335,15 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         if (a.length() > b.length()) return a.charAt(n);
         if (b.length() > a.length()) return b.charAt(n);
         return 0;
+    }
+
+    public void resolve(Expr expr, int depth) {
+        locals.put(expr, depth);
+    }
+
+    private Object lookUpVariable(Token name, Expr.Variable expr) {
+        Integer distance = locals.get(expr);
+        if (distance != null) return environment.getAt(distance, name.lexeme);
+        else return globals.get(name);
     }
 }

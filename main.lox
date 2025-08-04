@@ -1,3 +1,1 @@
-print "Reading file:";
-print read("main.lox");
-print "Finished Reading File";
+return 1;
