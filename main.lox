@@ -1,1 +1,10 @@
-return 1;
+class Bacon {
+    eat() {
+        print "Crunch Crunch Crunch";
+        print "I love " + this.macro;
+    }
+}
+
+var bacon = Bacon();
+bacon.macro = "protein";
+bacon.eat();

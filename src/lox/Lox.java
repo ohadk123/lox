@@ -6,7 +6,9 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Lox {
     private static final Interpreter interpreter = new Interpreter();
@@ -14,7 +16,6 @@ public class Lox {
     public static boolean hadRuntimeError = false;
 
     public static void main(String[] args) throws IOException {
-        System.out.println("Working Directory = " + System.getProperty("user.dir"));
         if (args.length > 1) {
             System.err.println("Usage: jlox [script]");
             System.exit(64);

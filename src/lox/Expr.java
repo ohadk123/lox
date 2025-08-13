@@ -6,11 +6,14 @@ abstract class Expr {
     interface Visitor<T> {
         T visitAssignExpr(Assign expr);
         T visitBinaryExpr(Binary expr);
-        T visitGroupingExpr(Grouping expr);
         T visitLiteralExpr(Literal expr);
         T visitLogicalExpr(Logical expr);
+        T visitSetExpr(Set expr);
+        T visitThisExpr(This expr);
         T visitUnaryExpr(Unary expr);
         T visitCallExpr(Call expr);
+        T visitGetExpr(Get expr);
+        T visitGroupingExpr(Grouping expr);
         T visitVariableExpr(Variable expr);
     }
 
@@ -46,19 +49,6 @@ abstract class Expr {
         }
     }
 
-    static class Grouping extends Expr {
-        final Expr expression;
-
-        Grouping(Expr expression) {
-            this.expression = expression;
-        }
-
-        @Override
-        <T> T accept(Visitor<T> visitor) {
-            return visitor.visitGroupingExpr(this);
-        }
-    }
-
     static class Literal extends Expr {
         final Object value;
 
@@ -86,6 +76,36 @@ abstract class Expr {
         @Override
         <T> T accept(Visitor<T> visitor) {
             return visitor.visitLogicalExpr(this);
+        }
+    }
+
+    static class Set extends Expr {
+        final Expr object;
+        final Token name;
+        final Expr value;
+
+        Set(Expr object, Token name, Expr value) {
+            this.object = object;
+            this.name = name;
+            this.value = value;
+        }
+
+        @Override
+        <T> T accept(Visitor<T> visitor) {
+            return visitor.visitSetExpr(this);
+        }
+    }
+
+    static class This extends Expr {
+        final Token keyword;
+
+        This(Token keyword) {
+            this.keyword = keyword;
+        }
+
+        @Override
+        <T> T accept(Visitor<T> visitor) {
+            return visitor.visitThisExpr(this);
         }
     }
 
@@ -118,6 +138,34 @@ abstract class Expr {
         @Override
         <T> T accept(Visitor<T> visitor) {
             return visitor.visitCallExpr(this);
+        }
+    }
+
+    static class Get extends Expr {
+        final Expr object;
+        final Token name;
+
+        Get(Expr Object, Token name) {
+            this.object = Object;
+            this.name = name;
+        }
+
+        @Override
+        <T> T accept(Visitor<T> visitor) {
+            return visitor.visitGetExpr(this);
+        }
+    }
+
+    static class Grouping extends Expr {
+        final Expr expression;
+
+        Grouping(Expr expression) {
+            this.expression = expression;
+        }
+
+        @Override
+        <T> T accept(Visitor<T> visitor) {
+            return visitor.visitGroupingExpr(this);
         }
     }
 

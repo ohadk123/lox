@@ -3,6 +3,7 @@ package lox;
 public enum FunctionType {
     NONE("global"),
     FUNCTION("function"),
+    INITIALIZER("initializer"),
     METHOD("method");
 
     private final String name;
