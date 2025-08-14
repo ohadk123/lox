@@ -10,6 +10,7 @@ abstract class Expr {
         T visitLogicalExpr(Logical expr);
         T visitSetExpr(Set expr);
         T visitThisExpr(This expr);
+        T visitSuperExpr(Super expr);
         T visitUnaryExpr(Unary expr);
         T visitCallExpr(Call expr);
         T visitGetExpr(Get expr);
@@ -109,6 +110,21 @@ abstract class Expr {
         }
     }
 
+    static class Super extends Expr {
+        final Token keyword;
+        final Token method;
+
+        Super(Token keyword, Token method) {
+            this.keyword = keyword;
+            this.method = method;
+        }
+
+        @Override
+        <T> T accept(Visitor<T> visitor) {
+            return visitor.visitSuperExpr(this);
+        }
+    }
+
     static class Unary extends Expr {
         final Token operator;
         final Expr right;
@@ -145,8 +161,8 @@ abstract class Expr {
         final Expr object;
         final Token name;
 
-        Get(Expr Object, Token name) {
-            this.object = Object;
+        Get(Expr object, Token name) {
+            this.object = object;
             this.name = name;
         }
 

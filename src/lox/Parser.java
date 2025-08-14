@@ -171,6 +171,12 @@ public class Parser {
         }
         if (match(IDENTIFIER)) return new Expr.Variable(previous());
         if (match(THIS)) return new Expr.This(previous());
+        if (match(SUPER)) {
+            Token keyword = previous();
+            consume(DOT, "Expect '.' after 'super'.");
+            Token method = consume(IDENTIFIER, "Expect superclass method.");
+            return new Expr.Super(keyword, method);
+        }
 
         throw error(peek(), "Expect expression.");
     }
@@ -207,11 +213,17 @@ public class Parser {
         Token name = consume(IDENTIFIER, "Expect class name.");
         consume(LEFT_BRACE, "Expect '{' before class body.");
 
+        Expr.Variable superclass = null;
+        if (match(LESS)) {
+            consume(IDENTIFIER, "Expect superclass name.");
+            superclass = new Expr.Variable(previous());
+        }
+
         List<Stmt.Function> methods = new ArrayList<>();
         while (!check(RIGHT_BRACE) && !isAtEnd()) methods.add(function(FunctionType.METHOD));
 
         consume(RIGHT_BRACE, "Expect '}' after class body.");
-        return new Stmt.Class(name, methods);
+        return new Stmt.Class(name, superclass, methods);
     }
 
     /* Statements Parsing */
