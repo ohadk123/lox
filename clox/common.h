@@ -1,8 +1,8 @@
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef INCLUDE_CLOX_COMMON_H
+#define INCLUDE_CLOX_COMMON_H
 
 #include <stdbool.h>
-#include <stddef.>
+#include <stddef.h>
 #include <stdint.h>
 
-#endif // COMMON_H
+#endif // INCLUDE_CLOX_COMMON_H
