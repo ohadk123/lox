@@ -1,6 +1,7 @@
 #include "chunk.h"
 #include "memory.h"
 #include "value.h"
+#include <stdint.h>
 
 void Chunk_init(Chunk *chunk) {
     chunk->code = NULL;
@@ -11,18 +12,18 @@ void Chunk_init(Chunk *chunk) {
 }
 
 void Chunk_free(Chunk *chunk) {
-    reallocate(chunk->code, chunk->cap, 0);
-    reallocate(chunk->lines, chunk->cap, 0);
+    FREE_ARRAY(uint8_t, chunk->code, chunk->cap);
+    FREE_ARRAY(int, chunk->lines, chunk->cap);
     ValueArray_free(&chunk->constants);
     Chunk_init(chunk);
 }
 
 void Chunk_write(Chunk *chunk, uint8_t byte, int line) {
     if (chunk->len == chunk->cap) {
-        chunk->cap = chunk->cap == 0 ? MIN_CHUNK_CAP : chunk->cap * 2;
-        
-        chunk->code = reallocate(chunk->code, chunk->len, chunk->cap);
-        chunk->lines = reallocate(chunk->lines, chunk->len, chunk->cap);
+        int oldCapacity = chunk->cap;
+        chunk->cap = GROW_CAPACITY(oldCapacity);
+        chunk->code = GROW_ARRAY(uint8_t, chunk->code, oldCapacity, chunk->cap);
+        chunk->lines = GROW_ARRAY(int, chunk->lines, oldCapacity, chunk->cap);
     }
 
     chunk->code[chunk->len] = byte;

@@ -8,20 +8,21 @@ void Value_print(Value value) {
 
 void ValueArray_init(ValueArray *valueArray)
 {
-	valueArray->values = NULL;
+    valueArray->values = NULL;
     valueArray->len = 0;
     valueArray->cap = 0;
 }
 
 void ValueArray_free(ValueArray *valueArray) {
-    reallocate(valueArray->values, valueArray->cap, 0);
+    FREE_ARRAY(Value, valueArray->values, valueArray->cap);
     ValueArray_init(valueArray);
 }
 
 void ValueArray_append(ValueArray *valueArray, Value value) {
     if (valueArray->len == valueArray->cap) {
-        valueArray->cap = valueArray->cap == 0 ? 8 : valueArray->cap * 2;
-        valueArray->values = reallocate(valueArray->values, valueArray->len, valueArray->cap);
+        int oldCapacity = valueArray->cap;
+        valueArray->cap = GROW_CAPACITY(oldCapacity);
+        valueArray->values = GROW_ARRAY(Value, valueArray->values, oldCapacity, valueArray->cap);
     }
 
     valueArray->values[valueArray->len++] = value;
